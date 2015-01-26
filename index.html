@@ -61,6 +61,7 @@
 
       <div class="page-header">
         <h1>Accela Construct API Status</h1>
+        <h3>Click the link in the Path column for detailed results.</h3>
       </div>
 
       <div>
@@ -70,9 +71,9 @@
       <div class="tests"/>
         <table class="table table-striped table-bordered table-hover">
           <tr><th>Method</th><th>Description</th><th>Path</th><th class="result">Result</th><th class="code">Response Code</th></tr>
-          <tr class="method"><td>Get All Records</td><td>Gets record information, based on the specified request parameters.</td><td class="path"><a href="#">/v4/records?limit=1</a></td><td class="result">Ready</td><td class="code"></td></tr>
-          <tr class="method"><td>Get All Agencies</td><td>Gets enabled agencies.</td><td class="path"><a href="#">/v4/agencies</a></td><td class="result">Ready</td><td class="code"></td></tr>
-          <tr class="method"><td>Get All Parcels</td><td>Gets a list of parcels in the agency database.</td><td class="path"><a href="#">/v4/parcels?limit=1</a></td><td class="result">Ready</td><td class="code"></td></tr>
+          <tr class="method"><td class="description">Get All Records</td><td>Gets record information, based on the specified request parameters.</td><td class="path"><a href="#">/v4/records?limit=1</a></td><td class="result">Ready</td><td class="code"></td></tr>
+          <tr class="method"><td class="description">Get All Agencies</td><td>Gets enabled agencies.</td><td class="path"><a href="#">/v4/agencies</a></td><td class="result">Ready</td><td class="code"></td></tr>
+          <tr class="method"><td class="description">Get All Parcels</td><td>Gets a list of parcels in the agency database.</td><td class="path"><a href="#">/v4/parcels?limit=1</a></td><td class="result">Ready</td><td class="code"></td></tr>
         </table>
 
         <div id="details"></div>
@@ -102,7 +103,7 @@
             $(".path").click(function(e) {
               var path = $(this).text();
               var url = base_url + path;
-              runSingleTest(url)
+              runSingleTest(url, $(this))
               e.preventDefault();
             });
 
@@ -110,7 +111,7 @@
               $.ajax({
                 url: url,
                 beforeSend: function(xhr) {
-                  $("#details .well").remove();
+                  $("#details .well, p").remove();
                   element.find(".result").text("Running");
                   xhr.setRequestHeader("x-accela-appid", app_id);
                   xhr.setRequestHeader("x-accela-environment", environment);
@@ -127,7 +128,9 @@
               });
             }
 
-            function runSingleTest(url) {
+            function runSingleTest(url, element) {
+              var methodName = element.siblings(".description").text();
+              console.log(methodName);
               $.ajax({
                 url: url,
                 beforeSend: function(xhr) {
@@ -136,7 +139,9 @@
                   xhr.setRequestHeader("x-accela-agency", agency);
                 },
                 complete: function(xhr) {
-                   $("#details .well").remove();
+                   $("#details .well, p").remove();
+                   $("#details").append("<p><strong>Method</strong>: " + methodName + "</p>");
+                   $("#details").append("<p><strong>URL</strong>: " + url + "</p>");
                    $("#details").append("<div class=\"well\"><pre>" + JSON.stringify(xhr.responseJSON, null, 2) + "</pre></div>");
                 }
               });
